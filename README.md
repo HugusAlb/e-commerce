@@ -4,6 +4,12 @@ Atividade Avaliativa de Programação Web II — IFPE 2026.1
 
 ---
 
+## Demo
+
+Acesse a versão publicada em: **https://hugusalb.github.io/e-commerce/**
+
+---
+
 ## Como rodar o projeto
 
 **Pré-requisito:** ter o [Node.js](https://nodejs.org) instalado (versão 18 ou superior).
@@ -21,6 +27,9 @@ Após rodar o segundo comando, abra o navegador e acesse `http://localhost:5173`
 ```bash
 # Para gerar a versão final para publicação
 npm run build
+
+# Para publicar no GitHub Pages
+npm run deploy
 ```
 
 ---
@@ -49,6 +58,8 @@ Uma página inicial de loja virtual (e-commerce) feita com **ReactJS**. Ao abrir
 src/
 ├── services/           # Comunicação com APIs externas
 ├── hooks/              # Lógica de estado reutilizável
+│   ├── useProducts.js
+│   └── useDebounce.js
 ├── components/         # Peças visuais da interface
 │   ├── Header/
 │   ├── SearchBar/
@@ -75,6 +86,24 @@ Quando chamado → acessa https://fakestoreapi.com/products
               → retorna a lista de produtos
               → lança um erro se a conexão falhar
 ```
+
+---
+
+### `hooks/useDebounce.js`
+
+**O que é debounce:** técnica que adia a execução de uma ação até que o usuário pare de realizar determinado evento por um tempo definido. Evita processar cada tecla digitada individualmente.
+
+**O que este hook faz:** recebe um valor e um tempo de espera (em milissegundos) e retorna uma versão "atrasada" desse valor — ela só é atualizada após o usuário parar de mudar o valor pelo tempo configurado.
+
+**Fluxo de funcionamento:**
+
+```
+Valor muda → inicia um temporizador de 400ms
+           → se o valor mudar de novo antes dos 400ms: cancela e reinicia
+           → se os 400ms passarem sem nova mudança: atualiza o valor retornado
+```
+
+Internamente usa `setTimeout` dentro de um `useEffect`. O `return` do efeito cancela o temporizador anterior (`clearTimeout`) sempre que o valor muda — esse é o mecanismo central do debounce.
 
 ---
 
@@ -126,7 +155,7 @@ Em React, a interface é dividida em **componentes**: peças independentes e reu
 
 **O que aparece na tela:** o campo de texto "Buscar produto..." dentro do cabeçalho.
 
-**O que faz:** captura o que o usuário digita e avisa o `App` para filtrar os produtos em tempo real. O SearchBar não faz a filtragem — ele só repassa o texto digitado para quem pediu.
+**O que faz:** captura o que o usuário digita e avisa o `App` para filtrar os produtos. Usa o hook `useDebounce` internamente: o input responde imediatamente a cada tecla (boa experiência para o usuário), mas só propaga o valor para o `App` após 400ms de pausa — evitando re-renderizações desnecessárias enquanto o usuário ainda está digitando.
 
 ---
 
@@ -189,9 +218,11 @@ Usuário abre a página
                  └─ [erro] Snackbar aparece no canto superior direito
 
 Usuário digita na busca
-  └─ SearchBar avisa o App
-       └─ App recalcula a lista filtrada
-            └─ ProductList atualiza os cards exibidos
+  └─ SearchBar atualiza o campo visualmente (imediato)
+       └─ [aguarda 400ms sem nova tecla — debounce]
+            └─ SearchBar avisa o App
+                 └─ App recalcula a lista filtrada
+                      └─ ProductList atualiza os cards exibidos
 
 Usuário escolhe uma categoria
   └─ CategoryFilter avisa o App
