@@ -7,15 +7,18 @@ export function useProducts() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetchProducts()
-      .then(data => {
+    async function load() {
+      try {
+        const data = await fetchProducts()
         setProducts(data)
-        setLoading(false)
-      })
-      .catch(err => {
+      } catch (err) {
         setError(err.message)
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    load()
   }, [])
 
   return { products, loading, error, clearError: () => setError(null) }

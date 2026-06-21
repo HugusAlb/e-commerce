@@ -97,6 +97,13 @@ Página abre → loading = true
            → [falha]   error = mensagem do erro, loading = false
 ```
 
+A busca é feita com `async/await` dentro de um bloco `try/catch/finally`:
+- `try` — tenta buscar os dados
+- `catch` — captura o erro se a busca falhar
+- `finally` — executa **sempre** (com ou sem erro), por isso é onde o `loading` é desligado — evita repetir essa linha nos dois casos
+
+O `useEffect` não aceita função `async` diretamente, então a função `load` é declarada dentro dele e chamada logo em seguida — esse é o padrão correto para usar `async/await` dentro de `useEffect`.
+
 O hook também fornece `clearError`, uma função que apaga o erro (usada para fechar o Snackbar).
 
 ---
