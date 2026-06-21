@@ -1,0 +1,22 @@
+.category-select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  font-weight: 600;
+}
+
+.category-select option {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .category-select {
+    width: 100%;
+  }
+}
