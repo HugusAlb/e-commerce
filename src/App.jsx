@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useProducts } from './hooks/useProducts'
+import { useDebounce } from './hooks/useDebounce'
 import Header from './components/Header/Header'
 import ProductList from './components/ProductList/ProductList'
 import Snackbar from './components/Snackbar/Snackbar'
@@ -8,12 +9,13 @@ import './App.css'
 function App() {
   const { products, loading, error, clearError } = useProducts()
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 400)
   const [selectedCategory, setSelectedCategory] = useState('all')
 
   const categories = ['all', ...new Set(products.map(p => p.category))]
 
   const filtered = products.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(search.toLowerCase())
+    const matchesSearch = p.title.toLowerCase().includes(debouncedSearch.toLowerCase())
     const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory
     return matchesSearch && matchesCategory
   })
