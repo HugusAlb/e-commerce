@@ -6,7 +6,7 @@ import Snackbar from './components/Snackbar/Snackbar'
 import './App.css'
 
 function App() {
-  const { products, loading, error, clearError } = useProducts()
+  const { products, loading, error, clearError } = useProducts(10)
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
 

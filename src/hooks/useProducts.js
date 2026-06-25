@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { fetchProducts } from '../services/productsService'
 
-export function useProducts() {
+export function useProducts(limit) {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -9,7 +9,7 @@ export function useProducts() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await fetchProducts()
+        const data = await fetchProducts(limit)
         setProducts(data)
       } catch (err) {
         setError(err.message)
@@ -19,7 +19,7 @@ export function useProducts() {
     }
 
     load()
-  }, [])
+  }, [limit])
 
   return { products, loading, error, clearError: () => setError(null) }
 }
